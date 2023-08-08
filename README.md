@@ -52,7 +52,7 @@ go get github.com/0xzer/snapper
 - [x] Generate fidelius keys
 
 # Usage
-- More examples here
+- More examples [here](https://github.com/0xzer/snapper/blob/main/tests/examples.go)
 
 ```go
 package main
