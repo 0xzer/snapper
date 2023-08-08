@@ -7,11 +7,6 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/x509"
-	"encoding/base64"
-	"fmt"
-	"log"
-	"os"
-
 	"github.com/0xzer/snapper/data/methods"
 	"github.com/0xzer/snapper/protos"
 )
@@ -36,7 +31,9 @@ func NewFideliusTentativeWebKey() (*protos.FideliusTentativeWebKey, []byte, []by
 	}, pubKey, privKey, nil
 }
 
+// not implemented
 func LoadPublicKeyFromBase64(publicKey string) (*protos.FideliusTentativeWebKey, error) {
+	/*
 	privKeyBytes, err := base64.StdEncoding.DecodeString(publicKey)
 	if err != nil {
 		return nil, err
@@ -53,11 +50,10 @@ func LoadPublicKeyFromBase64(publicKey string) (*protos.FideliusTentativeWebKey,
 	}
 
 	uncompressedKey := convertToUncompressed(pubKey)
-	log.Println(key)
-	log.Println(uncompressedKey)
-	os.Exit(1)
 
 	return nil, nil
+	*/
+	return &protos.FideliusTentativeWebKey{}, nil
 }
 
 func generateKeyPair(privKey []byte) ([]byte, []byte, error) {

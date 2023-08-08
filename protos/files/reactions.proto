@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package reactions;
+
+import "uuid.proto";
+
+option go_package = "../protos";
+
+message Reaction {
+    uuid.UUID userId = 1;
+    ReactionType reactionType = 2;
+    int64 conversationVersion = 3;
+}
+
+message ReactionType {
+    oneof reaction {
+        int64 intentType = 1;
+    }
+}
+
+message NewReaction {
+    ReactionType reaction = 1;
+}
+
+message ReactionRequest {
+    NewReaction newReaction = 1;
+}
+
+message ReactionResult {
+    NewReaction newReaction = 1;
+    int64 versionReactionSetAt = 2;
+}
+
+message RemoveReactionRequest {}
+
+message RemoveReactionResult {}

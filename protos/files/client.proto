@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package client;
+
+option go_package = "../protos";
+
+message SnapClientMetadata {
+    uint64 clientEditTimeBeforeSend = 1;
+    bool savedToMemoriesBeforeSend = 2;
+    bool isLoadedFromCameraRoll = 3;
+    int32 retakeTrials = 4;
+    repeated int32 zoomLevelSamples = 5;
+    int32 connectionType = 6;
+}
+
+message UserContext {
+    string userCountry = 1;
+    string userIp = 2;
+    string userId = 3;
+    string userRegion = 4;
+
+    string appVersion = 10;
+}

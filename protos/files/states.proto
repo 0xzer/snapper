@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package states;
+
+option go_package = "../protos";
+
+message MigrationInfo {
+    MigrationState migrationSate = 1;
+}
+
+message SnapItem {
+    SnapItemState state = 1;
+    bool hasAudio = 2;
+}
+
+message ChatItem {
+    ChatItemState state = 1;
+}
+
+message CallItem {
+    CallItemState state = 1;
+    bool isVideo = 2;
+}
+
+message ConversationItem {
+    ConversationItemState state = 1;
+}
+
+enum MigrationState {
+    LEGACY = 0;
+    ARROYO_DEPRECATED = 1;
+    ARROYO = 2;
+}
+
+enum SnapItemState {
+    UNKNOWN_SNAP_STATE = 0;
+    VIEWED = 1;
+    UNVIEWED = 2;
+    SCREENSHOTTED = 3;
+    RECORDED = 4;
+    REPLAYED = 5;
+}
+
+enum ChatItemState {
+    UNKNOWN_CHAT_STATE = 0;
+    CHAT_VIEWED = 1;
+    CHAT_UNVIEWED = 2;
+    CHAT_SCREENSHOTTED_VIEWED = 3;
+    CHAT_SCREENSHOTTED_UNVIEWED = 4;
+    CHAT_RECORDED_VIEWED = 5;
+    CHAT_RECORDED_UNVIEWED = 6;
+    CHAT_SAVED_VIEWED = 7;
+    CHAT_SAVED_UNVIEWED = 8;
+    CHAT_ERASED = 9;
+    CHAT_SAVED_TO_CAMERA_ROLL_VIEWED = 10;
+    CHAT_SAVED_TO_CAMERA_ROLL_UNVIEWED = 11;
+}
+
+enum ConversationItemState {
+    UNKNOWN_CONVERSATION_STATE = 0;
+    CONVERSATION_CREATED_VIEWED = 1;
+    CONVERSATION_CREATED_UNVIEWED = 2;
+    CONVERSATION_MEMBER_ADDED_VIEWED = 3;
+    CONVERSATION_MEMBER_ADDED_UNVIEWED = 4;
+    CONVERSATION_NAME_CHANGED_VIEWED = 5;
+    CONVERSATION_NAME_CHANGED_UNVIEWED = 6;
+    CONVERSATION_MEMBER_KICKED = 7;
+}
+
+enum CallItemState {
+    UNKNOWN_CALL_STATE = 0;
+    CALL_MISSED_VIEWED = 1;
+    CALL_MISSED_UNVIEWED = 2;
+    CALL_CALLED_VIEWED = 3;
+    CALL_CALLED_UNVIEWED = 4;
+}

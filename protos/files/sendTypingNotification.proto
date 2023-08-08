@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package sendTypingNotification;
+
+import "uuid.proto";
+
+
+option go_package = "../protos";
+
+message SendTypingNotificationRequest {
+    uuid.UUID selfUserId = 1;
+    uuid.UUID conversationId = 2;
+    int64 lastCreatedMessageId = 3; // this is not needed if there is no messages (might be currentVersion actually - not sure)
+}
+
+message SendTypingNotificationResponse {}

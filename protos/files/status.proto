@@ -1,0 +1,247 @@
+syntax = "proto3";
+
+package status;
+
+import "uuid.proto";
+import "policy.proto";
+
+option go_package = "../protos";
+
+message StatusMessage {
+    oneof status {
+        ScreenCaptureStatusMessage screenCapture = 1;
+        CallingStatusMessage callingStatus = 2;
+        ParticipantChangeStatusMessage participantChange = 3;
+        NameChangeStatusMessage nameStatusChange = 4;
+        MessageEraseStatusMessage messageErase = 5;
+        GroupChatCreatedStatusMessage groupChatCreated = 6;
+        SaveToCameraRollStatusMessage saveToCameraRoll = 7;
+        ChangeConversationRetentionPolicyStatusMessage changeConversationRetentionPolicy = 8;
+        GameClosedStatusMessage gameClosed = 9;
+        InviteLinkStatusMessage inviteLink = 10;
+        GroupInviteStickerJoinTextPromptStatusMessage groupInviteStickerJoinTextPrompt = 11;
+        CanvasCustomUpdateStatusMessage canvasUpdate = 12;
+        LiveLocationShareTerminatedStatusMessage liveLocationTerminated = 13;
+        InMyContactsStatusMessage inMyContacts = 14;
+        AcceptFamilyCenterInviteStatusMessage acceptFamilyCenterInvite = 15;
+        LeaveFamilyCenterStatusMessage leaveFamilyCenter = 16;
+        DWebUpsellStatusMessage dwebUpsell = 17;
+        QuoteReplyShareStatusMessage quoteReplyShare = 18;
+        UpdateChatWallpaperStatusMessage updateChatWallpaperStatusMessage = 19;
+        PlusGiftStatusMessage plusGift = 20;
+        StreakStatusMessage streak = 21;
+        MerlinWelcomeStatusMessage merlinWelcome = 22;
+        LiveLocationGroupShareStatusMessage liveLocationGroupMessage = 23;
+        SnapPostOpenViewingPolicyStatusMessage snapPostOpenViewingPolicyStatusMessage = 24;
+    }
+}
+
+message SnapPostOpenViewingPolicyStatusMessage {
+    uuid.UUID initiatingUserId = 1;
+    policy.SnapPostOpenViewingPolicy snapPostOpenViewingPolicy = 2;
+}
+
+message LiveLocationGroupShareStatusMessage {}
+
+message MerlinWelcomeStatusMessage {}
+
+message StreakStatusMessage {
+    StreakStatus streakStatus = 1;
+    int32 streakCount = 2;
+}
+
+enum StreakStatus {
+    STREAK_STATUS_UNSET = 0;
+    STREAK_STATUS_START = 1;
+    STREAK_STATUS_END = 2;
+}
+
+message PlusGiftStatusMessage {}
+
+message UpdateChatWallpaperStatusMessage {}
+
+message QuoteReplyShareStatusMessage {}
+
+message DWebUpsellStatusMessage {}
+
+message LeaveFamilyCenterStatusMessage {}
+
+message AcceptFamilyCenterInviteStatusMessage {}
+
+message InMyContactsStatusMessage {}
+
+message LiveLocationShareTerminatedStatusMessage {
+    uuid.UUID initiatingUserId = 1;
+    int32 terminateReason = 2;
+}
+
+message CanvasCustomUpdateStatusMessage {
+    uuid.UUID appId = 1;
+    repeated uuid.UUID mediaUserIds = 2;
+    string textContent = 3;
+    CanvasCustomUpdateInfo updateInfo = 4;
+}
+
+message CanvasCustomUpdateInfo {
+    string path = 1;
+    string payload = 2;
+}
+
+message GroupInviteStickerJoinTextPromptStatusMessage {
+    uuid.UUID inviteGroupId = 1;
+    string inviteGroupName = 2;
+    uuid.UUID inviteId = 3;
+}
+
+message InviteLinkStatusMessage {
+    uuid.UUID initiatingUserId = 1;
+    InviteLinkStatus inviteLinkStatus = 2;
+}
+
+enum InviteLinkStatus {
+    INVITE_LINK_STATUS_UNSET = 0;
+    INVITE_LINK_STATUS_CREATED = 1;
+    INVITE_LINK_STATUS_DELETED = 2;
+}
+
+message GameClosedStatusMessage {
+    string appId = 1;
+    repeated uuid.UUID participants = 2;
+}
+
+message ChangeConversationRetentionPolicyStatusMessage {
+    uuid.UUID initiatingUserId = 1;
+    policy.RetentionPolicy newRetentionPolicy = 2;
+    ChangeConversationRetentionPolicyDisplayStatus displayType = 3;
+    bool alsoRevertedSnapPostOpenViewingPolicyToEnvelope = 5;
+}
+
+enum ChangeConversationRetentionPolicyDisplayStatus {
+    DISPLAY_TYPE_UNSET = 0;
+    DISPLAY_TYPE_PERMANENT_USER_INITIATED = 1;
+    DISPLAY_TYPE_PERMANENT_SYSTEM = 2;
+    DISPLAY_TYPE_TOGGLEABLE = 3;
+}
+
+message SaveToCameraRollStatusMessage {
+    uuid.UUID userId = 1;
+    int64 messageId = 2;
+    repeated MediaTypeToCount mediaTypeToCount = 3;
+}
+
+message MediaTypeToCount {
+    MediaTypeToCountStatus_Type mediaType = 1;
+    int64 count = 2;
+}
+
+enum MediaTypeToCountStatus_Type {
+    UNKNOWN_MEDIA_COUNT_STATUS = 0;
+    IMAGE_MEDIA_COUNT_STATUS = 1;
+    VIDEO_MEDIA_COUNT_STATUS = 2;
+}
+
+message GroupChatCreatedStatusMessage {
+    uuid.UUID initiatingUser = 1;
+    repeated uuid.UUID participants = 2;
+    string groupChatName = 3;
+}
+
+message MessageEraseStatusMessage {
+    uuid.UUID userId = 1;
+    MessageEraseType messageType = 2;
+}
+
+enum MessageEraseType {
+    MESSAGE_TYPE_UNSET = 0;
+    MESSAGE_TYPE_CHAT = 1;
+    MESSAGE_TYPE_SNAP = 2;
+}
+
+message NameChangeStatusMessage {
+    uuid.UUID initiatingUserId = 1;
+    string oldName = 2;
+    string newName = 3;
+}
+
+message ScreenCaptureStatusMessage {
+    uuid.UUID capturingUser = 1;
+    ScreenCaptureType captureType = 2;
+    int32 captureSource = 3;
+    int32 capturingUserInfo = 4;
+}
+
+message CallingStatusMessage {
+    CallStatus callStatus = 1;
+    CallType callType = 2;
+    uuid.UUID userId = 3;
+    int32 callDuration = 4;
+    repeated uuid.UUID participants = 5;
+}
+
+message ParticipantChangeStatusMessage {
+    repeated ParticipantChangeStatusMessage_Entry statusChanges = 1;
+    uuid.UUID initiatingUserDeprecated = 2;
+    uuid.UUID initiatingUser = 3;
+}
+
+message ParticipantChangeStatusMessage_Entry {
+    uuid.UUID affectedUser = 1;
+    ParticipantStatusChange statusChange = 2;
+    int32 changeOrigin = 3;
+    ParticipantLeaveReason leaveReason = 4;
+}
+
+enum ParticipantStatusChange {
+    STATUS_ADDED = 0;
+    STATUS_CREATED = 1;
+    STATUS_LEFT = 2;
+}
+
+enum ParticipantLeaveReason {
+    LEAVE_REASON_UNSET = 0;
+    LEAVE_REASON_SELF_INITIATED = 1;
+    LEAVE_REASON_KICKED = 2;
+}
+
+message StatusScreenCaptureDisplayInfo {
+    ScreenCaptureType captureType = 1;
+}
+
+enum ScreenCaptureType {
+    SCREEN_SHOT = 0;
+    SCREEN_RECORD = 1;
+}
+
+message StatusCallingStatusDisplayInfo {
+    CallStatus callStatus = 1;
+    CallType callType = 2;
+}
+
+enum CallStatus {
+    STARTED = 0;
+    ENDED = 1;
+    LEFT = 2;
+    JOINED = 3;
+    MISSED = 4;
+}
+
+enum CallType {
+    AUDIO = 0;
+    VIDEO = 1;
+}  
+
+message StatusParticipantAddDisplayInfo {}
+
+message StatusNameChangeDisplayInfo {}
+
+message StatusSaveToCameraRollDisplayInfo {}
+
+message StatusInMyContactsDisplayInfo {
+    uuid.UUID recentlyJoinedUserId = 1;
+}
+
+message StatusGenericChat {}
+
+message StatusParticipantKickDisplayInfo {}
+
+message StatusGroupChatCreatedDisplayInfo {}

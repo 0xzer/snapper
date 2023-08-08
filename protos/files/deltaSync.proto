@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package deltaSync;
+
+import "uuid.proto";
+import "conversation.proto";
+import "messages.proto";
+import "http.proto";
+
+option go_package = "../protos";
+
+message BatchDeltaSyncRequest {
+    repeated DeltaSyncRequest deltaSyncRequests = 1;
+}
+
+message BatchDeltaSyncResponse {
+    repeated DeltaSyncResponseWrapper deltaSyncResponses = 1;
+}
+
+message DeltaSyncRequest {
+    int64 startingVersion = 1;
+    uuid.UUID conversationId = 2;
+    uuid.UUID selfUserId = 4;
+    uuid.UUID otherParticipantUserId = 6;
+}
+
+message DeltaSyncResponse {
+    int64 startingVersion = 1;
+    int64 currentServerTime = 2;
+    oneof metadata {
+        conversation.Conversation conversation = 3;
+        conversation.LightweightConversation lightweightConversation = 8;
+    }
+    repeated messages.ContentMessage contentMessages = 4;
+    bool resetConversation = 5;
+    oneof feedInfo {
+        conversation.ConversationEntry feedEntry = 6;
+        int64 feedOpenedMessageDisplayTimestamp = 7;
+    }
+    int64 baseVersion = 9;
+}
+
+message DeltaSyncResponseWrapper {
+    oneof response {
+        DeltaSyncResponse successResponse = 1;
+        DeltaSyncFailureResponse failureResponse = 2;
+        DeltaSyncUpToDateResponse upToDateResponse = 3;
+    }
+}
+
+message DeltaSyncUpToDateResponse {
+    uuid.UUID conversationId = 1;
+}
+
+message DeltaSyncFailureResponse {
+    uuid.UUID conversationId = 1;
+    http.FailureReason failureReason = 2;
+    bool retryable = 3;
+}

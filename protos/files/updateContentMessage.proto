@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+import "uuid.proto";
+import "updateAction.proto";
+import "messages.proto";
+import "http.proto";
+import "updateResult.proto";
+
+
+package updateContentMessage;
+
+option go_package = "../protos";
+
+message UpdateContentMessageRequest {
+    uint64 clientResolutionId = 1;
+    int64 currentVersion = 2;
+    updateAction.UpdateAction update = 3;
+    uuid.UUID selfUserId = 4;
+}
+
+message UpdateContentMessageResponse {
+    uint64 clientResolutionId = 1;
+    int64 currentVersion = 2;
+    bool success = 3;
+    bool retryable = 4;
+    messages.ContentMessage statusMessage = 5;
+    oneof update {
+        updateResult.ReadResult read = 6;
+        updateResult.SaveResult save = 7;
+        updateResult.EraseResult erase = 8;
+        updateResult.AddEelReEncryptionInitResult addEelReEncryptionInit = 9;
+        updateResult.AppendEelReEncryptionDestinationResult appendEelReEncryptionDestination = 10;
+        updateResult.EraseStoryMediaResult eraseStoryMedia = 11;
+        updateResult.ReplayResult replay = 12;
+    }
+
+    http.FailureReason result = 99;
+}

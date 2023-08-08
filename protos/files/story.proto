@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package story;
+
+import "geo.proto";
+import "uuid.proto";
+import "client.proto";
+import "common.proto";
+import "caption.proto";
+
+option go_package = "../protos";
+
+message SnapStoryId {
+    CompositeStoryId compositeStoryId = 1;
+    string legacyStoryId = 2;
+    string posterOwnerId = 3;
+}
+
+message StoryPostInfo {
+    StoryMetadata storyMetadata = 1;
+}
+
+message StoryMetadata {
+    string clientId = 1;
+    RankingMetadata rankingMetadata = 3;
+    ExperimentalMetadata experimentalMetadata = 4;
+    Location location = 5;
+    bytes thumbnailData = 6;
+    caption.CaptionMetadata captionMetadata = 7;
+    string captionText = 8;
+    geo.GeoAddress geoAddressFromIp = 9;
+    int32 orientation = 11;
+    string locale = 12;
+    common.TimeZone timezone = 13;
+    int64 goLiveTsMs = 14;
+    
+    string routeTag = 100;
+}
+
+message Location {
+    oneof location {
+        geo.LocationRequest request = 1;
+        geo.LocationCoordinates coordinates = 2;
+    }
+}
+
+message RankingMetadata {
+    bool postedToUserStory = 1;
+    client.SnapClientMetadata clientMetadata = 2;
+}
+
+message ExperimentalMetadata {
+    bool isTimelineMode = 1;
+}
+
+message StoryMentionInfo {
+    bool isUserTagged = 1;
+}
+
+message CompositeStoryId {
+    common.Corpus corpus = 1;
+    string id = 2;
+    uint64 version = 3;
+}
+
+message StoryDestination {
+    uuid.UUID storyDestinationId = 1;
+    StoryPostDestinationMetadata storyPostDestinationMetadata = 2;
+}
+
+message StoryPostDestinationMetadata {
+    oneof metaData {
+        MyStoryDestinationMetadata myStory = 1;
+        CustomStoryDestinationMetadata customStory = 2;
+        /*
+        continue this later
+        OurStoryDestinationMetadata ourStory = 3;
+        SnapProStoryDestinationMetadata snapProStory = 4;
+        AppStoryDestinationMetadata appStory = 5;
+        SavedStoryDestinationMetadata savedStory = 6;
+        */
+    }
+    bytes messagingDestinationId = 7;
+}
+
+message CustomStoryDestinationMetadata {
+    uuid.UUID groupId = 1;
+    common.CustomizedTTL customizedTtl = 2;
+}
+
+message MyStoryDestinationMetadata {
+    int32 privacyOverride = 1;
+    common.CustomizedTTL customizedTtl = 2;
+    MyStoryVariant variant = 3;
+}
+
+enum MyStoryVariant {
+    MYSTORY_VARIANT_UNSET = 0;
+    AFTER_DARK = 1;
+}
+
+enum PostingStoryType {
+    UNKNOWN_POSTING_STORY_TYPE = 0;
+    POSTING_STORY_TYPE_OUR = 1;
+    POSTING_STORY_TYPE_MY = 2;
+    POSTING_STORY_TYPE_CUSTOM = 3;
+    POSTING_STORY_TYPE_SNAPPRO = 4;
+    POSTING_STORY_TYPE_APP = 5;
+    POSTING_STORY_TYPE_SAVED = 6;
+    POSTING_STORY_TYPE_PUBLISHER = 7;
+}

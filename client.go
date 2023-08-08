@@ -11,7 +11,6 @@ import (
 	"github.com/rs/zerolog"
 )
 
-type EventHandler func(evt interface{})
 type Proxy func(*http.Request) (*url.URL, error)
 type Client struct {
 	Request *Request
@@ -60,7 +59,6 @@ func NewClient(session *Session, logger zerolog.Logger, proxy *string) *Client {
 				cli.logger.Fatal().Err(authErr).Msg("failed to authenticate:")
 			}
 		}
-
 
 		if cli.Session.FideliusKeys == nil {
 			fideliusKeys, err := cli.Account.InitializeWebKey()

@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package messages;
+
+import "uuid.proto";
+import "story.proto";
+import "crypto.proto";
+//import "content.proto";
+import "contentEnvelope.proto";
+import "reactions.proto";
+import "common.proto";
+import "policy.proto";
+
+option go_package = "../protos";
+
+message ContentMessage {
+    int64 messageId = 1;
+    uuid.UUID senderId = 2;
+    DeliveryDestination deliveryDestination = 3;
+    contentEnvelope.ContentEnvelope contents = 4;
+    policy.ContentReadReleasePolicy releasePolicy = 5;
+    MessageMetadata metaData = 6;
+    uint64 clientResolutionId = 7;
+    policy.ContentSenderLeavePolicy leavePolicy = 8;
+    LegacyMessageId analyticsMessageId = 9;
+    common.StreakMetadata streakMetadata = 10;
+}
+
+message LegacyMessageId {
+    oneof legacyMessageId {
+        uuid.UUID chatMessageId = 1;
+        int64 oneOnOneSnapId = 2;
+        string stringMessageId = 3;
+    }
+    bool isLowerCase = 4;
+}
+
+message MessageMetadata {
+    int64 serverCreatedAt = 1;
+    int64 readTimestamp = 2;
+    bool tombstone = 3;
+    repeated uuid.UUID readBy = 4;
+    repeated uuid.UUID releasedBy = 5;
+    repeated uuid.UUID savedBy = 6;
+    repeated uuid.UUID mentionedUserIds = 7;
+    repeated uuid.UUID screenshottedBy = 8;
+    repeated uuid.UUID screenRecordedBy = 9;
+    repeated uuid.UUID replayedBy = 10;
+    int64 conversationVersion = 11;
+    oneof quotedMessageInfo {
+        MessageMetadata_QuotedMessageMetadata quotedMetadata = 12;
+        int32 hiddenReason = 13;
+    }
+    repeated reactions.Reaction reactions = 14;
+    int64 lastReactionUpdateConversationVersion = 15;
+    repeated crypto.EelReEncryptionInit eelReEncryptionInits = 16;
+    policy.SnapPostOpenViewingPolicy snapPostOpenViewingPolicy = 17;
+    repeated MessageMetadata_ReplayUserMetadata replayedByUsers = 18;
+}
+
+message MessageMetadata_ReplayUserMetadata {
+    uuid.UUID userId = 1;
+    int32 count = 2;
+}
+
+message MessageMetadata_QuotedMessageMetadata {
+    int64 quotedMessageId = 1;
+}
+
+message DeliveryDestination {
+    oneof destination {
+        ConversationDestination conversationDestination = 1;
+        story.StoryDestination storyDestination = 2;
+        PhoneNumberDestination phoneNumberDestination = 3;
+    }
+    crypto.EncryptionInfo encryptionInfo = 99;
+}
+
+message ConversationDestination {
+    uuid.UUID conversationId = 1;
+    int64 currentVersion = 2;
+    int64 serverSyncCreatedAt = 3;
+}
+
+message PhoneNumberDestination {
+    string phoneNumber = 1;
+}
+
+message ReplyMessageInfo {
+    int64 quotedMessageId = 1;
+}

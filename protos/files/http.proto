@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package http;
+
+option go_package = "../protos";
+
+enum FailureType {
+    UNKNOWN = 0;
+    MALFORMED_REQUEST = 1;
+    PERSISTENCE = 2;
+    NOT_AUTHORIZED = 3;
+    DUPLICATE_MESSAGE = 4;
+    UPDATE_NOT_APPLICABLE = 5;
+    NOT_FRIENDS = 6;
+    DUPLICATE_REQUEST = 7;
+    DEPENDENCY_NOT_SATISFIED = 8;
+    OUT_OF_SYNC = 9;
+    NOT_FOUND = 10;
+    MESSAGE_ALREADY_EXPIRED = 11;
+}
+
+message FailureReason {
+    FailureType failureType = 1;
+    string failureDescription = 2;
+    ServerFailureInfo serverInfo = 3;
+    RetryPolicy retryPolicy = 4;
+}
+
+message RetryPolicy {
+    int64 backoffTimeMs = 1;
+    bool shouldRetry = 2;
+}
+
+message ServerFailureInfo {
+    bool rateLimited = 1;
+    int32 errorRegion = 2;
+    bool isIntentionalError = 3;
+}

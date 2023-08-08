@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+import "media.proto";
+
+package transcription;
+
+option go_package = "../protos";
+
+message UpdateAllowsTranscription {
+    bool allowsTranscription = 1;
+}
+
+message UpdateAllowsTranscriptionResult {
+    bool allowsTranscription = 1;
+}
+
+message AttachTranscription {
+    media.MediaReference mediaReference = 1;
+    int32 mediaReferenceListIndex = 2;
+}
+
+message AttachTranscriptionResult {
+    media.MediaReferences mediaReferences = 1;
+    Transcriptions transcriptions = 2;
+}
+
+message Transcriptions {
+    repeated TranscriptionInfo transcriptions = 1;
+}
+
+message TranscriptionInfo {
+    media.MediaId mediaId = 1;
+    int32 mediaReferenceListIndex = 2;
+}

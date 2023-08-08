@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+import "policy.proto";
+import "messages.proto";
+import "common.proto";
+import "contentEnvelope.proto";
+import "media.proto";
+import "uuid.proto";
+import "conversation.proto";
+
+package destinationResult;
+
+option go_package = "../protos";
+
+message ConversationDestinationResult {
+    uuid.UUID conversationDestinationId = 1;
+    uint64 currentVersion = 2;
+    uint64 createdMessageId = 3;
+    policy.ContentReadReleasePolicy releasePolicy = 4;
+    messages.MessageMetadata messageMetadata = 5;
+    common.StreakMetadata streakMetadata = 6;
+    repeated media.MediaReference snapStoryReferences = 7;
+    messages.LegacyMessageId analyticsMessageId = 8;
+    conversation.UpdateWatermarkResult updateWatermarkResult = 9;
+    repeated messages.ContentMessage statusMessages = 17;
+    contentEnvelope.ContentEnvelope_Thumbnails snapStoryReferenceThumbnails = 18;
+}
+
+message StoryDestinationResult {
+    uuid.UUID storyDestinationId = 1;
+    bytes storyId = 2;
+}
+
+message PhoneNumberDestinationResult {
+    string phoneNumber = 1;
+    uuid.UUID userId = 2;
+    oneof info {
+        uuid.UUID conversationId = 3;
+        bool isTemporaryUser = 4;
+    }
+}

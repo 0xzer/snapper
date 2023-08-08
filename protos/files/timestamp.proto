@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package timestamp;
+
+option go_package = "../protos";
+
+message Timestamp {
+    int64 timestampMs = 2;
+}
+
+message TimestampGoogle {
+    int64 seconds = 1;
+    int32 nanos = 2;
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package fidelius;
+
+option go_package = "../protos";
+
+message FideliusTentativeWebKey {
+    bytes uncompressedPubkey = 1; // EC public key uncompressed
+    bytes keyPairId = 2; // HMAC_SHA256_HASH (identity key)
+    bytes rwk = 3; // HMAC_SHA256_KEY
+    uint64 version = 4;
+}
+
+message FideliusGetFriendKeys {
+
+}

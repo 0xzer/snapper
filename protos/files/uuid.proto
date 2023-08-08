@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package uuid;
+
+option go_package = "../protos";
+
+message UUID {
+    bytes encodedId = 1;
+}
+
+message UUIDMobile {
+    sfixed64 highBits = 1;
+    sfixed64 lowBits = 2;
+}

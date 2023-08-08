@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "story.proto";
+import "common.proto";
+import "messages.proto";
+import "gifts.proto";
+
+package featureAttachment;
+
+option go_package = "../protos";
+
+message FeatureAttachment {
+    oneof attachment {
+        FSNEndpoint fsnEndpoint = 1;
+        story.SnapStoryId snapStoryContent = 2;
+        story.StoryMentionInfo shareInfo = 3;
+        story.StoryPostInfo storyPostInfo = 4;
+        common.MentionInfo mentionInfo = 5;
+        messages.ReplyMessageInfo replyMessageInfo = 6;
+        gifts.GiftInfo giftInfo = 7;
+        AutoSave autoSave = 8;
+        common.SnapViewability snapViewability = 9;
+    }
+}
+
+message FSNEndpoint {
+    string fsnEndpoint = 1;
+}
+
+message AutoSave {}

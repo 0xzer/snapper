@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package syncConversations;
+
+import "conversation.proto";
+import "uuid.proto";
+import "blizzard.proto";
+
+option go_package = "../protos";
+
+message SyncConversationsRequest {
+    uuid.UUID selfUserId = 1;
+    bytes syncToken = 2; // this is the sync token you receive OR "useV3" in bytes if you have not gotten a syncToken at all yet / want a new one
+    repeated conversation.ConversationVersionInfo versionInfos = 3;
+    blizzard.SyncConversationsBlizzardData blizzardData = 4;
+}
+
+message SyncConversationsResponse {
+    repeated conversation.ConversationEntry conversations = 1;
+    bytes syncToken = 2;
+    bool resetFeed = 3;
+    int64 currentServerTime = 4;
+    bool incomplete = 5;
+    conversation.LastConversationIndicator lastConversation = 6;
+    // 7 = DeltaSyncResponse ?
+}

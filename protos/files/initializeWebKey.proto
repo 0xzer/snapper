@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "fidelius.proto";
+
+package initializeWebKey;
+
+option go_package = "../protos";
+
+message InitializeWebKeyRequest {
+    repeated bytes onDeviceKeyPairIds = 1;
+    fidelius.FideliusTentativeWebKey tentativeWebKey = 2;
+}
+
+message InitializeWebKeyResponse {
+    bytes rwk = 1;
+    bytes keyPairId = 2;
+}

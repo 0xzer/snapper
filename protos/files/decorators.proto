@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package decorators;
+
+option go_package = "../protos";
+
+message Decorators {
+    /**
+    * This indicates what feedback is requested for this message.
+    * When this field is empty, no feedback is requested
+    */
+    BotFeedback botFeedback = 1;
+    /** If there are no action suggestions this field is not set */
+    ActionSuggestions actionSuggestions = 2;
+}
+
+message BotThumbFeedback {
+    /**
+    * Making this an int means that we wont need to update native each time we want to add a prompt
+    * This represents the question being asked i.e. "Was this helpful?". These prompts are localized on client
+    * Adding a new prompt will require a client change and accounting for backward compatibility
+    */
+    uint64 promptId = 1;
+}
+
+message BotFeedback {
+    oneof feedback {
+        BotThumbFeedback thumbFeedback = 1;
+    }
+}
+
+message ReplySuggestion {
+    string text = 1;
+}
+
+message ActionSuggestion {
+    oneof suggestion {
+        ReplySuggestion replySuggestion = 1;
+    }
+}
+
+message ActionSuggestions {
+    repeated ActionSuggestion suggestions = 1;
+}

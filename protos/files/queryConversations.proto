@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package queryConversations;
+
+import "uuid.proto";
+import "conversation.proto";
+
+option go_package = "../protos";
+
+message QueryConversationsRequest {
+    uuid.UUID selfUserId = 1;
+    int64 startingTimestamp = 2; // not required
+    int32 requestedPageSize = 3;
+    QueryConversationsRequest_PaginationInfo paginationInfo = 4;
+    
+    // dont dwell on it too much.
+    // it looks like a lot of data, but it's just being sent back and forth as bytes
+    bytes syncToken = 5;
+}
+
+message QueryConversationsRequest_PaginationInfo {
+    int64 oldestConversationOrderTimestamp = 1;
+    uuid.UUID oldestConversationId = 2;
+}
+
+message QueryConversationsResponse {
+    repeated conversation.ConversationEntry conversations = 1;
+    bool noMore = 2;
+    bytes syncToken = 3;
+    conversation.LastConversationIndicator lastConversation = 4;
+}

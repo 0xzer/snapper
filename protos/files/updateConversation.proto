@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+import "uuid.proto";
+import "http.proto";
+import "messages.proto";
+import "policy.proto";
+import "conversation.proto";
+
+package updateConversation;
+
+option go_package = "../protos";
+
+message UpdateConversationRequest {
+    uuid.UUID conversationId = 1;
+    uint64 clientResolutionId = 2;
+    int64 currentVersion = 3;
+
+    oneof updateConversationAction {
+        UpdateConversationTitle conversationTitle = 4;
+        UpdateConversationAddParticipants addParticipants = 5;
+        UpdateConversationLeave leaveConversation = 6;
+        UpdateConversationRetentionPolicy retentionPolicy = 7;
+        UpdateConversationNotificationPreference notificationPreference = 8;
+        UpdateConversationRead read = 10;
+        UpdateConversationClearFromFeed clearFromChatFeed = 11;
+    }
+}
+
+message UpdateConversationResponse {
+    uuid.UUID conversationId = 1;
+    uint64 clientResolutionId = 2;
+    UpdateConversationResult updateData = 3;
+
+    http.FailureReason result = 99;
+}
+
+message UpdateConversationResult {
+    int64 currentVersion = 1;
+    bool success = 2;
+
+    UpdateConversationActionResult actionResult = 4;
+}
+
+message UpdateConversationActionResult {
+    uuid.UUID conversationId = 1;
+    int64 currentVersion = 2;
+    messages.ContentMessage statusMessage = 8;
+    oneof result {
+        UpdateConversationTitle conversationTitleResult = 3;
+        AddParticipantsResult newParticipants = 4;
+        ConversationLeaveResult leaveResult = 5;
+        UpdateConversationRetentionPolicy retentionPolicyResult = 6;
+        UpdateConversationRead readConversationResult = 7;
+        UpdateConversationClearFromFeedResult clearFromFeedResult = 9;
+    }
+}
+
+message UpdateConversationClearFromFeedResult {}
+
+message UpdateConversationClearFromFeed {
+    uuid.UUID selfUserId = 1;
+    int64 updateTimestamp = 11; // nowTimestamp
+}
+
+message UpdateConversationRead {
+    uuid.UUID selfUserId = 1;
+    ReadConversationMessageData readConversationMessageData = 2;
+}
+
+message ReadConversationMessageData {
+    int64 lastMessageId = 2;
+}
+
+message UpdateConversationRetentionPolicy {
+    uuid.UUID selfUserId = 1;
+    policy.RetentionPolicy retentionPolicy = 2;
+}
+
+message UpdateConversationNotificationPreference {
+    uuid.UUID selfUserId = 1;
+    int32 someInt = 2; // only set when setting to all_messages?
+    int32 someInt2 = 3; // always set to 1? bool? 
+    conversation.ChatNotificationPreference setting = 4;
+}
+
+message UpdateConversationTitle {
+    uuid.UUID selfUserId = 1;
+    string oldTitle = 2;
+    string newTitle = 3;
+}
+
+message UpdateConversationAddParticipants {
+    uuid.UUID selfUserId = 1;
+    repeated uuid.UUID participants = 2;
+}
+
+message UpdateConversationLeave {
+    uuid.UUID selfUserId = 1;
+    uuid.UUID selfUserIdLeft = 2; // might be repeated participants? in the future, I think this will also be the way to "kick" participants
+}
+
+message ConversationLeaveResult {
+    uuid.UUID selfUserId = 1;
+}
+
+message AddParticipantsResult {
+    uuid.UUID selfUserId = 1;
+    repeated conversation.Participant addedParticipants = 2;
+}

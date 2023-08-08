@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package blizzard;
+
+option go_package = "../protos";
+
+message ChatWallpaperBlizzardData {
+    int32 chatWallpaperSource = 1;
+}
+
+message SyncConversationsBlizzardData {
+    string tivTransactionId = 1;
+    SyncReason syncReason = 2;
+}
+
+enum SyncReason {
+    UNSET = 0;
+    PAGE_LOAD = 1;
+    PAGE_FOCUS = 2;
+    ONLINE = 3;
+    VISIBILITY_CHANGE = 4;
+}

@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package contentEnvelope;
+
+import "uuid.proto";
+import "crypto.proto";
+import "media.proto";
+import "transcription.proto";
+import "common.proto";
+import "display.proto";
+
+option go_package = "../protos";
+
+message ContentEnvelope {
+    repeated ContentEnvelope_RemoteMediaInfo remoteMediaInfos = 1;
+    common.ContentType contentType = 2;
+    crypto.EnvelopeEncryption envelopeEncryption = 3;
+    //content.Contents contents = 4;
+    // The actual contents of the message received is in here, you need to decode it yourself with the content.proto/Contents message
+    bytes contents = 4; // snapchat: lets store the contents in bytes because we are special
+    repeated media.ContentEnvelope_MediaReferenceList mediaReferenceLists = 5;
+    ContentEnvelope_DisplayInfo displayInfo = 6;
+    ContentEnvelope_SavePolicy savePolicy = 7;
+    ContentEnvelope_Thumbnails thumbnails = 8;
+    ContentEnvelope_FeedDisplayInfo feedDisplayInfo = 9;
+    oneof messageTypeMetadata {
+        AudioNoteMetadata audioNote = 11;
+        SnapReplyMetadata snapReply = 13;
+        ShareMetadata share = 14;
+    }
+    ContentEnvelope_BotMentionResponseMetadata botMentionResponseMetadata = 12;
+}
+
+message ContentEnvelope_BotMentionResponseMetadata {
+    uuid.UUID requesterId = 1;
+    int64 requestMessageId = 2;
+}
+
+message ShareMetadata {
+    int32 storyMediaState = 1;
+}
+
+message SnapReplyMetadata {
+    int32 storyMediaState = 1;
+}
+
+message AudioNoteMetadata {
+    bool allowsTranscription = 1;
+    transcription.Transcriptions transcriptions = 10;
+}
+
+message ContentEnvelope_FeedDisplayInfo {
+    oneof feedDisplayInfo {
+        display.SnapDisplayInfo snapDisplayInfo = 1;
+        display.StatusMessageDisplayInfo statusMessageDisplayInfo = 2;
+        display.ExternalMediaDisplayInfo externalMediaDisplayInfo = 3;
+        display.ShareDisplayInfo shareDisplayInfo = 4;
+    }
+}
+
+message ContentEnvelope_Thumbnails {
+    repeated media.ThumbnailInfo thumbnails = 1;
+}
+
+message ContentEnvelope_DisplayInfo {
+    bool hasAudio = 1;
+}
+
+message ContentEnvelope_RemoteMediaInfo {
+    oneof mediaInfo {
+        bytes contentObject = 1;
+        string legacyMediaId = 2;
+        string contentUrl = 5;
+    }
+    int32 mediaType = 3;
+    bool hasAudio = 4;
+}
+
+enum ContentEnvelope_SavePolicy {
+    ENVELOPE_UNSET = 0;
+    PROHIBITED = 1;
+    LIFETIME = 2;
+    VIEW_SESSION = 3;
+}
+
+enum ContentEnvelope_RemoteMediaInfo_MediaType {
+    MEDIATYPE_UNKNOWN = 0;
+    IMAGE = 1;
+    VIDEO = 2;
+    GIF = 3;
+}

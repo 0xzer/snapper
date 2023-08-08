@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+import "crypto.proto";
+import "messages.proto";
+import "contentEnvelope.proto";
+import "media.proto";
+
+package updateResult;
+
+option go_package = "../protos";
+
+message ReadResult {
+    int64 readTimestamp = 1;
+}
+
+message ReleaseResult {}
+
+message SaveResult {
+    crypto.EnvelopeEncryption envelopeEncryption = 1;
+    media.MediaReferences mediaReferences = 2;
+    contentEnvelope.ContentEnvelope_Thumbnails thumbnails = 3;
+}
+
+message UnsaveResult {}
+
+message EraseResult {
+    messages.ContentMessage updatedMessage = 1;
+}
+
+message EraseStoryMediaResult {
+    media.MediaReferences mediaReferences = 1;
+    contentEnvelope.ContentEnvelope_Thumbnails thumbnails = 2;
+}
+
+message TombstoneResult {}
+
+message SaveToCameraRollResult {}
+
+message ScreenshotResult {}
+
+message ScreenRecordResult {}
+
+message ReplayResult {
+    int32 replayCount = 1;
+}
+
+message AddEelReEncryptionInitResult {
+    repeated crypto.EelReEncryptionInit eelReEncryptionInits = 1;
+}
+
+message AppendEelReEncryptionDestinationResult {
+    repeated crypto.EelReEncryptionInit eelReEncryptionInits = 1;
+    crypto.EelDestinationEncryption eelDestinationEncryption = 2;
+}

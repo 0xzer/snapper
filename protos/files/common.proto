@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+import "uuid.proto";
+import "policy.proto";
+
+package common;
+
+option go_package = "../protos";
+
+enum ConversationType {
+    ONE_ON_ONE = 0;
+    USER_CREATED_GROUP = 1;
+}
+
+message SnapViewability {
+    policy.SnapPostOpenViewingPolicy snapPostOpenViewingPolicy = 1;
+}
+
+message MentionInfo {
+    repeated uuid.UUID mentionedUserIds = 1;
+}
+
+message TimeZone {
+    string id = 1;
+}
+
+message Empty {}
+
+enum AssetType {
+    ASSET_TYPE_UNSET = 0;
+    BLOOPS_STICKER = 1;
+    MUSIC = 2;
+    RAW_MEDIA = 3;
+    CANVAS_STICKER = 4;
+    BASE_MEDIA = 5;
+    OVERLAY = 6;
+    EDITS = 7;
+    FIRST_FRAME = 8;
+    THUMBNAIL = 9;
+    CAMEO = 10;
+    WEB_THUMBNAIL = 11;
+    WEB_MEDIA = 12;
+    LENS_ASSET = 13;
+    VOICEOVER = 14;
+    AVATAR_IMAGE = 15;
+    SPECTACLES_SIXDOF = 16;
+    PLAIN_MEDIA = 17;
+}
+
+message Range {
+    int32 location = 1;
+    int32 length = 2;
+}
+
+message StreakMetadata {
+    int32 streakCount = 1;
+    int64 streakExpirationTimestampMs = 2;
+    int32 latestExpiredStreakCount = 3;
+    int64 latestExpiredStreakExpirationTimestampMs = 4;
+}
+
+enum DynamicUrlType {
+    NONE = 0;
+    BITMOJI = 1;
+}
+
+enum ContentType {
+    SNAP = 0;
+    CHAT = 1;
+    EXTERNAL_MEDIA = 2;
+    SHARE = 3;
+    NOTE = 4;
+    STICKER = 5;
+    STATUS = 6;
+    LOCATION2 = 7; // ? skip
+    LOCATION = 8;
+    STATUS_SAVE_TO_CAMERA_ROLL = 9;
+    STATUS_CONVERSATION_CAPTURE_SCREENSHOT = 10;
+    STATUS_CONVERSATION_CAPTURE_RECORD = 11;
+    STATUS_CALL_MISSED_VIDEO = 12;
+    STATUS_CALL_MISSED_AUDIO = 13;
+    STATUS_INVITE_LINK_CHANGE = 14;
+    CANVAS_APP = 15;
+    LIVE_LOCATION_SHARE = 16;
+    CREATIVE_TOOL_ITEM = 17;
+    FAMILY_CENTER_INVITE = 18;
+    FAMILY_CENTER_ACCEPT = 19;
+    FAMILY_CENTER_LEAVE = 20;
+    SNAP_NOT_VIEWABLE = 21;
+    STATUS_PLUS_GIFT = 22;
+    NON_PARTICIPANT_BOT_RESPONSE = 23;
+}
+
+enum CustomizedTTL {
+    CUSTOMIZED_TTL_UNSET = 0;
+    ONE_HOUR = 1;
+    SIX_HOURS = 6;
+    TWELVE_HOURS = 12;
+    ONE_DAY = 101;
+    TWO_DAYS = 102;
+    THREE_DAYS = 103;
+    ONE_WEEK = 201;
+}
+
+enum Corpus {
+    CORPUS_UNSET = 0;
+    CORPUS_URL = 1;
+}

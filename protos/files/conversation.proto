@@ -1,0 +1,173 @@
+syntax = "proto3";
+
+package conversation;
+
+import "uuid.proto";
+import "legacyConversation.proto";
+import "states.proto";
+import "blizzard.proto";
+import "common.proto";
+import "policy.proto";
+
+option go_package = "../protos";
+
+message Conversation {
+    uuid.UUID conversationId = 1;
+    string title = 2;
+    repeated Participant participants = 3;
+    policy.RetentionPolicy retentionPolicy = 4;
+    int64 version = 5;
+    common.ConversationType type = 6;
+    uuid.UUID creatorUserId = 7;
+    int64 creationTimeMs = 8;
+    SelfUserInfo selfUserInfo = 9;
+    common.StreakMetadata streakMetadata = 10;
+    int64 recipientReadReactionWatermark = 12;
+    int32 allowedJoinMethods = 16;
+    bool isOneOnOneRetentionMigrated = 17;
+    ChatWallpaper chatWallpaper = 18;
+    bool isLocked = 19;
+    repeated KickedParticipant kickedParticipants = 20;
+    bool hideFromSendtoAndSearch = 21;
+    bool isStreakEndStatusMessageSent = 22;
+    int32 subType = 23;
+    policy.SnapPostOpenViewingPolicy snapPostOpenViewingPolicy = 24;
+}
+
+message LightweightConversation {
+    uuid.UUID conversationId = 1;
+    int64 version = 2;
+    common.StreakMetadata streakMetadata = 3;
+    repeated ActiveParticipantData activeParticipants = 4;
+}
+
+message ConversationEntry {
+    ConversationVersionInfo versionInfo = 1;
+    legacyConversation.LegacyConversationInfo legacyInfo = 2;
+    int64 lastEventTimestamp = 3;
+    bool isDeleted = 4;
+    bool needsSync = 5;
+    DisplayInfo lastFeedUpdateInfo = 6;
+    repeated uuid.UUID participants = 7;
+    common.ConversationType type = 8;
+    string title = 9;
+    states.MigrationInfo migrationInfo = 10;
+    common.StreakMetadata streakMetadata = 11;
+    int64 pinnedTimestamp = 12;
+    bool hideFromSendtoAndSearch = 13;
+}
+
+message ConversationVersionInfo {
+    uuid.UUID conversationId = 1;
+    int64 conversationVersion = 2;
+}
+
+message LastConversationIndicator {
+    int64 oldestConversationOrderTimestamp = 1;
+    uuid.UUID oldestConversationId = 2;
+}
+
+message DisplayInfo {
+    int64 displayTimestamp = 2;
+    repeated uuid.UUID lastUpdateActorUserId = 3;
+    uuid.UUID feedItemCreatorUserId = 4;
+    oneof lastInteractionEvent {
+        states.SnapItem snapItem = 10;
+        states.ChatItem chatItem = 11;
+        states.CallItem callItem = 12;
+        states.ConversationItem conversationItem = 13;
+    }
+    int64 groupCreationTimestamp = 14;
+}
+
+message Participant {
+    uuid.UUID userId = 1;
+    int32 color = 2;
+    bool notificationsEnabled = 3;
+    int64 readHighWatermark = 4;
+    int64 releaseHighWatermark = 5;
+    uint64 videoChatUserId = 6;
+    int64 joinedConversationLatestMessageId = 7;
+    int64 snapReleaseHighWatermark = 8;
+    int64 reactionReadHighWatermark = 9;
+}
+
+message UpdateWatermarkResult {
+    uuid.UUID initiatingUserId = 1;
+    HighWatermark watermark = 2;
+    oneof readUpdate {
+        uint64 readTimestamp = 3;
+    }
+    UpdateWatermarkResult_ReadUpdate readUpdateInfo = 4;
+    HighWatermark reactionWatermark = 5;
+}
+
+message UpdateWatermarkResult_ReadUpdate {
+    uint64 readTimestamp = 1;
+    uint64 readTimestampMessageId = 2;
+}
+
+message HighWatermark {
+    HighWatermark_WatermarkType highWatermarkType = 1;
+    oneof watermarkToken {
+        uint64 messageId = 2;
+        uint64 conversationVersion = 3;
+    }
+}
+
+message ActiveParticipantData {
+    uuid.UUID participantId = 1;
+    int64 readHighWatermark = 2;
+    int64 snapReleaseHighWatermark = 3;
+    int64 reactionReadHighWatermark = 4;
+    int64 releaseWatermark = 5;
+}
+
+message KickedParticipant {
+    uuid.UUID userId = 1;
+    bool forDisplay = 2;
+}
+
+message SelfUserInfo {
+    int32 gameNotificationsPreference = 1;
+    repeated uuid.UUID blockedParticipantExceptions = 2;
+    ChatNotificationPreference chatNotificationsPreference = 3;
+    int64 joinTimestampMs = 4;
+    int64 pendingWatermark = 5;
+    int32 friendFeedVisibility = 6;
+    int64 pinnedTimestamp = 7;
+    int32 notificationSound = 8;
+}
+
+message ChatWallpaper {
+    uuid.UUID setterUserId = 1;
+    int64 creationTimestamp = 2;
+    ChatWallpaperContentReference contentReference = 3;
+    bool isInAppReportable = 4;
+    blizzard.ChatWallpaperBlizzardData blizzardData = 5;
+}
+
+message ChatWallpaperContentReference {
+    bool shouldSkipClaim = 1;
+    oneof reference {
+        ChatWallpaperContent wallpaperContent = 2;
+    }
+}
+
+message ChatWallpaperContent {
+    bytes contentObject = 1;
+    bytes key = 2;
+    bytes iv = 3;
+}
+
+enum HighWatermark_WatermarkType {
+    READ = 0;
+    RELEASE = 1;
+    SNAP_RELEASE = 2;
+}
+
+enum ChatNotificationPreference {
+    ALL_MESSAGES = 0;
+    SILENT = 1;
+    MENTION_ONLY = 2;
+}

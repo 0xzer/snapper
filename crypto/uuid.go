@@ -42,7 +42,7 @@ func GenerateBitUUID() (*big.Int, error) {
 	result := new(big.Int)
 	result, success := result.SetString(significantBits, 16)
 	if !success {
-		return nil, fmt.Errorf("Failed to convert hex string to big.Int")
+		return nil, fmt.Errorf("failed to convert hex string to big.Int")
 	}
 
 	return result, nil

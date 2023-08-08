@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+import "uuid.proto";
+import "common.proto";
+import "http.proto";
+import "conversation.proto";
+
+package createConversations;
+
+option go_package = "../protos";
+
+message CreateConversationRequest {
+    uuid.UUID selfUserId = 1;
+    uint64 clientResolutionId = 2;
+    // yes you need to include yourself
+    repeated uuid.UUID participants = 3;
+    string conversationTitle = 4;
+
+    common.ConversationType type = 6;
+    uuid.UUID createConversationAttemptId = 7;
+}
+
+message CreateConversationResponse {
+    uint64 clientResolutionId = 1;
+    oneof type {
+        CreateConversationResult createGroupResult = 2;
+    }
+    http.FailureReason failureReason = 99;
+}
+
+message CreateConversationResult {
+    bool success = 1;
+    conversation.Conversation conversation = 4;
+}

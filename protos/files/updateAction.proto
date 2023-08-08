@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+import "uuid.proto";
+import "crypto.proto";
+import "reactions.proto";
+import "transcription.proto";
+
+package updateAction;
+
+option go_package = "../protos";
+
+message UpdateAction {
+    uuid.UUID senderId = 1;
+    int64 messageId = 2;
+    uuid.UUID conversationId = 3;
+    oneof update {
+        Read read = 4;
+        Release release = 5;
+        Save save = 6;
+        Unsave unsave = 7;
+        Erase erase = 8;
+
+        SaveToCameraRoll saveToCameraRoll = 10;
+        Screenshot screenshot = 11;
+        ScreenRecord screenRecord = 12;
+        Replay replay = 13;
+        
+        UpdateEncryption encryptionUpdate = 15;
+        reactions.ReactionRequest messageReaction = 16;
+        reactions.RemoveReactionRequest removeReaction = 17;
+        crypto.AddEelReEncryptionInit addEelReEncryptionInit = 18;
+        crypto.AppendEelReEncryptionDestination eelAppendReEncryptionDestination = 19;
+        transcription.UpdateAllowsTranscription updateAllowsTranscription = 20;
+        transcription.AttachTranscription attachTranscription = 21;
+        EraseStoryMedia eraseStoryMedia = 22;
+    }
+    int64 updateTimestamp = 14; // now
+}
+
+message Read {}
+
+message Release {}
+
+message Save {
+    crypto.EnvelopeEncryption envelopeEncryption = 1;
+}
+
+message Unsave {}
+
+message Erase {}
+
+message EraseStoryMedia {}
+
+message Tombstone {}
+
+message SaveToCameraRoll {}
+
+message Screenshot {}
+
+message ScreenRecord {}
+
+message Replay {
+    int32 currentReplayCount = 1;
+}
+
+message UpdateEncryption {
+    crypto.EnvelopeEncryption envelopeEncryption = 1;
+}

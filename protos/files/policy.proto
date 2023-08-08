@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package policy;
+
+option go_package = "../protos";
+
+enum SnapPostOpenViewingPolicy {
+    POLICY_UNSET_OR_ENVELOPE = 0;
+    POLICY_MEDIA = 1;
+}
+
+enum ContentSenderLeavePolicy {
+    REMOVE = 0;
+    KEEP = 1;
+}
+
+enum ContentReadReleasePolicy {
+    HIGH_WATER_MARK = 0;
+    PER_MESSAGE = 1;
+    SNAP = 2;
+    HIGH_WATER_MARK_REQUESTED_MESSAGE = 3;
+}
+
+message RetentionPolicy {
+    oneof policy {
+        DynamicRetentionPolicy dynamic = 1;
+    }
+}
+
+message DynamicRetentionPolicy {
+    bool sendReadMessages = 1;
+    bool sendReleaseMessages = 2;
+    int64 unreadRetentionTimeSeconds = 3;
+    int64 readRetentionTimeSeconds = 4;
+}

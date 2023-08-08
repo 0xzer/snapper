@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+import "uuid.proto";
+import "messages.proto";
+import "contentEnvelope.proto";
+import "http.proto";
+import "policy.proto";
+import "common.proto";
+import "media.proto";
+import "destinationResult.proto";
+import "featureAttachment.proto";
+
+package createContentMessage;
+
+option go_package = "../protos";
+
+message CreateContentMessageRequest {
+    uuid.UUID senderId = 1;
+    uint64 clientResolutionId = 2;
+    repeated messages.DeliveryDestination destinations = 3;
+    contentEnvelope.ContentEnvelope content = 4;
+    repeated uint64 dependentClientResolutionIds = 5;
+    repeated featureAttachment.FeatureAttachment featureAttachment = 6;
+    bool isRetry = 7;
+
+    CreateContentMessageBlizzardData createContentMessageBlizzardData = 8;
+}
+
+message CreateContentMessageResponse {
+    uint64 clientResolutionId = 1;
+    repeated CreateContentMessageResult result = 2;
+}
+
+message CreateContentMessageResult {
+    uuid.UUID destinationId = 1;
+    bool success = 2;
+    http.FailureReason failureReason = 3;
+    bool retryable = 4;
+    uint64 currentVersion = 5;
+    uint64 createdMessageId = 6;
+    policy.ContentReadReleasePolicy releasePolicy = 7;
+    messages.MessageMetadata messageMetadata = 8;
+    common.StreakMetadata streakMetadata = 9;
+    media.MediaReference snapStoryReference = 10;
+    messages.LegacyMessageId analyticsMessageId = 11;
+    oneof destinationRes {
+        destinationResult.ConversationDestinationResult conversationDestinationResult = 12;
+        destinationResult.StoryDestinationResult storyDestinationResult = 13;
+        destinationResult.PhoneNumberDestinationResult phoneNumberDestinationResult = 14;
+    }
+}
+
+message CreateContentMessageBlizzardData {
+    uuid.UUID sendMessageAttemptId = 1;
+}

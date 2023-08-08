@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package caption;
+
+option go_package = "../protos";
+
+message CaptionMetadata {
+    float fontSize = 1;
+    float centerX = 2;
+    float centerY = 3;
+    float rotation = 4;
+    bool tracking = 5;
+    
+    CaptionMetadata_CaptionType type = 7;
+}
+
+enum CaptionMetadata_CaptionType {
+    DEFAULT = 0;
+    BIGTEXT_LEFT = 1;
+    BIGTEXT_CENTER = 2;
+    BIGTEXT_RIGHT = 3;
+}

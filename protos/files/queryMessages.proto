@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "uuid.proto";
+import "messages.proto";
+
+package queryMessages;
+
+option go_package = "../protos";
+
+message QueryMessagesRequest {
+    // THIS IS ALSO THE CURSOR, YOU FETCH NEW MESSAGES BY SUPPLYING THE CONVERSATION VERSION RELATIVE TO THE LATEST MESSAGES YOU WOULD LIKE TO FETCH
+    int64 currentVersion = 1;
+    uuid.UUID conversationId = 2;
+    int32 requestedCountSize = 3; // MAX 100
+    uuid.UUID selfUserId = 4;
+}
+
+message QueryMessagesResponse {
+    repeated messages.ContentMessage messages = 1;
+    bool noMore = 2;
+}

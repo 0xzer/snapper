@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package geo;
+
+option go_package = "../protos";
+
+message LocationRequest {}
+
+message LocationCoordinates {
+    double latitude = 1;
+    double longitude = 2;
+}
+
+message GeoAddress {
+    string country = 1;
+    string state = 2;
+    string city = 3;
+    string neighborhood = 6;
+    string countryCode = 10;
+}

@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package content;
+
+import "decorators.proto";
+import "status.proto";
+import "attributes.proto";
+//import "snapdoc.proto";
+
+option go_package = "../protos";
+
+message Contents {
+    oneof content {
+        Text text = 2;
+        /*
+        ExternalMedia externalMedia = 3;
+        Sticker sticker = 4;
+        Share share = 5;
+        Note note = 6;
+        SnapReply snapReply = 7;
+        */
+        status.StatusMessage statusMessage = 8;
+        /*
+        Location location = 9;
+        SnapDoc snapDoc = 11;
+        CanvasApp canvasApp = 12;
+        LiveLocationShare liveLocationShare = 13;
+        CTItemInstance creativeToolItem = 14;
+        FamilyCenterInvite familyCenterInvite = 15;
+        NonParticipantBotResponse nonParticipantBotResponse = 16;
+        */
+    }
+    decorators.Decorators decorators = 99;
+}
+
+message Text {
+    string text = 1;
+    repeated attributes.TextAttribute attributes = 2;
+}

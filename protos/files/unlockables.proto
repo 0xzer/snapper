@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package unlockables;
+
+option go_package = "../protos";
+
+message SnapDoc_Unlockables {
+    UnlockablesSnapInfo unlockablesSnapInfo = 1;
+    bytes encryptedGeoData = 2;
+}
+
+message UnlockablesSnapInfo {
+    string snapSessionId = 1;
+    repeated FilterInfo filters = 2;
+    repeated LensInfo lenses = 3;
+    repeated StickerInfo stickers = 4;
+    SnapSource snapSource = 5;
+}
+
+message FilterInfo {
+    int64 unlockableId = 1;
+    bool isUco = 2;
+}
+
+message LensInfo {
+    int64 unlockableId = 1;
+    int64 optionId = 2;
+    LensSource source = 3;
+}
+
+message StickerInfo {
+    int64 unlockableId = 1;
+    int64 stickerId = 2;
+}
+
+enum SnapSource {
+    SNAP_SOURCE_UNKNOWN = 0;
+    SNAP_SOURCE_CAMERA = 1;
+    SNAP_SOURCE_MEMORY = 2;
+}
+
+enum LensSource {
+    LENS_SOURCE_UNKNOWN = 0;
+    LENS_SOURCE_CAMERA = 1;
+    LENS_SOURCE_VIDEOCHAT = 2;
+    LENS_SOURCE_SNAPCODE = 3;
+    LENS_SOURCE_LOGIN_CAMERA = 4;
+    LENS_SOURCE_PREVIEW = 5;
+    LENS_SOURCE_MEMORIES = 6;
+    LENS_SOURCE_ON_DEMAND = 7;
+    LENS_SOURCE_DISCOVER = 8;
+    LENS_SOURCE_STORY = 9;
+}

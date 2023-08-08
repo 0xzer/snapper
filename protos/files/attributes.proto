@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package attributes;
+
+import "common.proto";
+import "uuid.proto";
+
+option go_package = "../protos";
+
+message TextAttribute {
+    common.Range range = 1;
+    oneof attribute {
+        TextFormatAttribute formatAttribute = 2;
+        TextMediaAttribute mediaAttribute = 3;
+        TextUrlAttribute urlAttribute = 4;
+        MentionAttribute mention = 5;
+        TextScaleAttribute scaleAttribute = 6;
+    }
+}
+
+/**
+ * Holds information for scaling the text message font size up or down by the given double scale.
+ * This is used for the Expressive Text feature: https://snapchat.quip.com/EL7UAqDvJ2L0
+*/
+message TextScaleAttribute {
+    double scale = 1;
+}
+
+/**
+ * Holds any user id that is mentioned by sender (i.e @bobby).
+ * This should be used to identify the user mentioned, especially in the case of
+ * a user name change after the message has been sent, to handle actions
+ * performed on the message (e.g. clicking on mentioned user).
+*/
+message MentionAttribute {
+    uuid.UUID userId = 2;
+}
+
+/**
+ * Holds any url attributes we found through parsing the message. These are
+ * either deeplinks or regular URLs
+*/
+message TextUrlAttribute {
+    /** https://www.apple.com, snapchat://maps/los_angeles */
+    string url = 2;
+}
+
+/**
+ * Holds any "media" parsing attributes we found. Those could include phone
+ * numbers, emails, mentions. They are rendered as media cards within chat and
+ * require a range and type
+*/
+message TextMediaAttribute {
+    TextMediaAttribute_TextMediaAttributeType textMediaAttributeType = 2;
+}
+
+enum TextMediaAttribute_TextMediaAttributeType {
+    /** ADDRESS - P. Sherman, 42 Wallaby Way, Sydney */
+    ADDRESS = 0;
+    /** PHONE - 867-5309 */
+    PHONE = 1;
+    /** EMAIL - steve@apple.com */
+    EMAIL = 2;
+    /** MENTION - @evan */
+    MENTION = 3;
+}
+
+message TextFormatAttribute {
+    TextFormatAttribute_TextFormatAttributeType textFormatAttributeType = 2;
+}
+
+enum TextFormatAttribute_TextFormatAttributeType {
+    BOLD = 0;
+    ITALICS = 1;
+    UNDERLINE = 2;
+}

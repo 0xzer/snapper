@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package crypto;
+
+import "uuid.proto";
+import "common.proto";
+
+option go_package = "../protos";
+
+message EnvelopeEncryption {
+    oneof method {
+        common.Empty none = 1;
+        ConversationEnvelopeEncryptionV1 conversationV1 = 2;
+        FideliusEncryption fideliusEncryption = 3;
+        ClearTextMediaKeyEncryption clearTextMediaKey = 4;
+        EelEncryption eelEncryption = 5;
+        ClearTextEelKeyEncryption clearTextEelKeyEncryption = 6;
+    }
+}
+
+message ClearTextEelKeyEncryption {
+    bytes cekIv = 1;
+    bytes cek = 2;
+}
+
+message ClearTextMediaKeyEncryption {
+    bytes mediaKey = 1;
+    bytes mediaIv = 2;
+}
+
+message FideliusEncryption {
+    bytes snapKey = 1;
+    bytes snapIv = 2;
+    bool retried = 3;
+    int32 version = 4;
+    bytes senderOutBeta = 5;
+    repeated FideliusRecipientInfo fideliusRecipientInfo = 6;
+}
+
+message FideliusRecipientInfo {
+    bytes recipientKey = 1;
+    bytes na = 2;
+    bytes phi = 3;
+    bytes tag = 4;
+    uuid.UUID senderUserId = 5;
+    uuid.UUID recipientUserId = 6;
+    int32 recipientVersion = 7;
+}
+
+message ConversationEnvelopeEncryptionV1 {
+    bytes iv = 1;
+    bytes nonce = 2;
+}
+
+message EelReEncryptionInit {
+    uuid.UUID userId = 1;
+    repeated bytes publicKeyIdentifiers = 2;
+}
+
+message EncryptionInfo {
+    oneof method {
+        common.Empty noOp = 1;
+        ConversationEncryptionV1 conversationV1 = 2;
+        common.Empty fidelius = 3;
+        common.Empty clearTextMediaKey = 4;
+        EelDestinationEncryption eelDestinationEncryption = 5;
+        common.Empty clearTextEelKey = 6;
+    }
+}
+
+message EelDeviceEncryption {
+    bytes recipientPublicKeyIdentifier = 1;
+    int32 recipientVersion = 2;
+    bytes cekCiphertext = 3;
+}
+
+message EelEncryption {
+    bytes cekIv = 1;
+    bytes nonce = 2;
+    bytes senderPublicKey = 3;
+    int32 senderVersion = 4;
+    bytes cek = 16;
+}
+
+message OverrideEncryptorInfo {
+    bytes encryptorPublicKey = 1;
+    int32 encryptorVersion = 2;
+    repeated EelDeviceEncryption eelDeviceEncryption = 3;
+    uuid.UUID encryptorUserId = 4;
+}
+
+message EelDestinationEncryption {
+    repeated EelDeviceEncryption eelDeviceEncryptions = 1;
+    repeated OverrideEncryptorInfo overrideEncryptorInfos = 2;
+}
+
+message ConversationEncryptionV1 {
+    ConversationEncryptionV1_WrappedKeysByIdEntry wrappedKeysByIdEntry = 1;
+    int64 senderKeyId = 2;
+}
+
+message ConversationEncryptionV1_WrappedKeysByIdEntry {
+    int64 key = 1;
+    ConversationEncryptionV1_KeyInfo value = 2;
+}
+
+message ConversationEncryptionV1_KeyInfo {
+    bytes wrappedKey = 1;
+    int32 version = 2;
+}
+
+message MediaEncryptionInfo {
+    bytes key = 1;
+    bytes iv = 2;
+}
+
+message AddEelReEncryptionInit {
+    bytes publicKeyIdentifier = 1;
+}
+
+message AppendEelReEncryptionDestination {
+    repeated EelReEncryptionInit acknowledgedRequests = 1;
+    EelDestinationEncryption newEelDestinationEncryption = 2;
+}

@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package snappable;
+
+option go_package = "../protos";
+
+message EncryptionData {
+    bytes key = 1;
+    repeated IvStoreEntry ivStore = 2;
+    bool isKeyServerEncrypted = 3;
+    bool isKeyE2eEncrypted = 4;
+    EncryptionScheme encryptionScheme = 5;
+}
+
+message PlayerData {
+    repeated StoreEntry store = 1;
+    bytes serializedStore = 2;
+}
+
+message StoreEntry {
+    string key = 1;
+    string value = 2;
+}
+
+message SessionData {
+    repeated PlayerDataEntry playerData = 1;
+}
+
+message PlayerDataEntry {
+    string key = 1;
+    PlayerData value = 2;
+}
+
+message SnappableMedia {
+    string sessionId = 1;
+    string playerId = 2;
+    string url = 3;
+    string key = 4;
+    int64 createdTime = 5;
+}
+
+message SnappableMessage {
+    Snappable snappable = 1;
+    repeated SnappableMedia media = 2;
+    string effectId = 3;
+    repeated string userIds = 4;
+    double focusPointX = 5;
+    double focusPointY = 6;
+    double focusPointWidth = 7;
+    ReplyType replyType = 8;
+    Snap3DData snap3dData = 9;
+    UsesCameraRoll usesCameraRollData = 10;
+    string assetBatchId = 500;
+}
+
+message Snappable {
+    string id = 1;
+    string sessionId = 2;
+    string playerId = 3;
+    SessionData sessionData = 4;
+    int64 createdTime = 5;
+    int64 expireTime = 6;
+    int32 version = 7;
+    EncryptionData encryptionData = 8;
+    int32 sessionDepth = 9;
+}
+
+message Snap3DData {
+    bool allowZippedMedia = 1;
+}
+
+message UsesCameraRoll {
+    bool usesCameraRoll = 1;
+}
+
+message IvStoreEntry {
+    string key = 1;
+    bytes value = 2;
+}
+
+enum EncryptionScheme {
+    ENCRYPTION_SCHEME_NOT_APPLICABLE = 0;
+    ENCRYPTION_SCHEME_SPOOKEY = 1;
+    ENCRYPTION_SCHEME_REGISTRY = 2;
+    ENCRYPTION_SCHEME_FIDELIUS = 3;
+}
+
+enum ReplyType {
+    REPLY_TYPE_NOT_APPLICABLE = 0;
+    REPLY_TYPE_CONTEXT = 1;
+    REPLY_TYPE_INTERSTITIAL = 2;
+}

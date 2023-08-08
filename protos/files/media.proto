@@ -1,0 +1,260 @@
+syntax = "proto3";
+
+import "common.proto";
+import "crypto.proto";
+
+package media;
+
+option go_package = "../protos";
+
+message MediaMetadata {
+    Metadata_MediaType type = 2;
+    Orientation orientation = 3;
+    crypto.MediaEncryptionInfo encryptionInfoV1 = 4;
+    MediaMetadata_MediaDimensions dimensions = 5;
+    /**
+     * Media duration for videos. This differs than the value in the Duration envelope;
+     * which is about playback characteristics. E.g. for videos the Duration envelope might
+     * contain "play_once"; whereas MediaMetadata.duration_ms might be 1230 ms.
+     *
+     * See duration.proto or playback_characteristics.proto for the full documentation of how this works.
+     *
+     * Clients can use this information to display:
+     * 1. Total time information of a progress bar on the fullscreen video player (though
+     *    that should really be based on the video itself; not this value)
+     * 2. Show total time on media before it's clicked (this *should* use this information; to
+     *    avoid having to download the media).
+     *
+     * TODO (@ricky-leatham): consider renaming "Duration" to something like "Playback"
+    */
+    oneof sourceMedia {
+        LegacyMediaSource legacyMediaSource = 6;
+        bytes contentDescriptor = 7;
+    }
+    
+    string mediaUrl = 9;
+    bool hasSound = 12;
+    bool zipped = 13;
+    bool frontFacing = 14;
+    MediaReference mediaReference = 17;
+    MediaId mediaId = 18;
+    crypto.MediaEncryptionInfo encryptionInfoV2 = 19;
+    common.AssetType assetType = 20; // enum
+    CaptureCharacteristics captureCharacteristics = 21;
+    DisplayOrientation displayOrientation = 22;
+    AudioMetadata audio = 23;
+    ImageMetadata image = 24;
+    VideoMetadata video = 25;
+}
+
+message MediaReferences {
+    repeated ContentEnvelope_MediaReferenceList mediaReferenceLists = 1;
+}
+
+message ContentEnvelope_MediaReferenceList {
+    repeated MediaReference reference = 1;
+}
+
+message AudioMetadata {
+    AudioCodecFormat codecFormat = 1; // enum
+}
+
+message ImageMetadata {
+    ImageCodecFormat codecFormat = 1; // enum
+}
+
+message VideoMetadata {
+    VideoCodecFormat codecFormat = 1; // enum
+    VideoFileFormat containerFormat = 2; // enum
+}
+
+message CaptureCharacteristics {
+    bool flashOn = 1;
+    bool frontFacing = 2;
+}
+
+/** Height and width of the referenced  */
+message MediaMetadata_MediaDimensions {
+    int32 width = 1;
+    int32 height = 2;
+}
+
+message ThumbnailInfo {
+    MediaId mediaId = 1;
+    int32 mediaReferenceListIndex = 2;
+}
+
+message MediaId {
+    uint64 mediaListId = 1;
+}
+
+message MediaReference {
+    string url = 2;
+    bytes contentObject = 3;
+    VideoDescription videoDescription = 5;
+    uint64 mediaListId = 6;
+    MediaReference_ClaimBehavior claimBehavior = 7;
+    MediaType mediaType = 8; // enum
+    string localContentKey = 9;
+    string localCacheKey = 10;
+}
+
+message VideoDescription {
+    VideoDescription_VideoPlaybackType videoPlaybackType = 1;
+    VideoDescription_MediaQualityType mediaQualityType = 2;
+}
+
+message LegacyMediaSource {
+    string sourceMediaId = 1;
+    LegacyDirectDownloadUrl directDownloadUrl = 2;
+}
+
+message LegacyDirectDownloadUrl {
+    string url = 1;
+    uint64 expirySeconds = 2;
+    MediaUrlType type = 3;
+    string region = 4;
+}
+
+/**
+ * The "DO_NOT_CLAIM" means that the media, once initially referenced, should
+ * have a fixed ttl, and thus it should not be re-claimed on a go-forward basis.
+ * For CAN_EXTEND_MEDIA_CLAIM cases, the party delivering the Snap in context
+ * should be responsible for making sure there's a claim matching the life cycle
+ * of this snap/snapdoc.
+*/
+enum MediaReference_ClaimBehavior {
+    REFERENCE_CAN_EXTEND_MEDIA_CLAIM = 0;
+    REFERENCE_DO_NOT_CLAIM = 1;
+}
+
+enum VideoDescription_VideoPlaybackType {
+    VIDEO_UNKNOWN_PLAYBACK_TYPE = 0;
+    /** FASTSTART_DISABLED - Can’t progressively stream; since MOOV atom is at the end */
+    VIDEO_FASTSTART_DISABLED = 1;
+    /** FASTSTART_ENABLED - Capable of progressive streaming; with MOOV atom at the front */
+    VIDEO_FASTSTART_ENABLED = 2;
+    VIDEO_HTTP_STREAMING_DASH = 3;
+    VIDEO_HTTP_STREAMING_HLS = 4;
+}
+
+/**
+ * The higher the value, the higher the media quality.
+*/
+enum VideoDescription_MediaQualityType {
+    VIDEO_MEDIA_QUALITY_TYPE_UNKNOWN = 0;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_1 = 100;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_2 = 200;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_3 = 300;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_4 = 400;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_5 = 500;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_6 = 600;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_7 = 700;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_MAX = 5000;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_4_5 = 450;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_2_1 = 210;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_2_2 = 220;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_2_5 = 250;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_3_2 = 320;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_3_5 = 350;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_2_7 = 270;
+    VIDEO_MEDIA_QUALITY_TYPE_LEVEL_6_5 = 650;
+}
+
+enum VideoFileFormat {
+    VIDEO_FILE_UNSET = 0;
+    VIDEO_FILE_MP4 = 1;
+    VIDEO_FILE_FMP4 = 2;
+}
+
+enum AudioCodecFormat {
+    AUDIO_CODEC_UNSET = 0;
+    AUDIO_CODEC_AAC = 1;
+    AUDIO_CODEC_HEAAC = 2;
+    AUDIO_CODEC_OPUS = 3;
+}
+enum ImageCodecFormat {
+    IMAGE_CODEC_UNSET = 0;
+    IMAGE_CODEC_JPEG = 1;
+    IMAGE_CODEC_PNG = 2;
+    IMAGE_CODEC_WEBP = 3;
+    IMAGE_CODEC_HEIF = 4;
+    IMAGE_CODEC_AWEBP = 5;
+    IMAGE_CODEC_GIF = 6;
+}
+enum VideoCodecFormat {
+    VIDEO_CODEC_UNSET = 0;
+    VIDEO_CODEC_H264 = 1;
+    VIDEO_CODEC_HEVC = 2;
+    VIDEO_CODEC_AV1 = 3;
+    VIDEO_CODEC_VP9 = 4;
+}
+
+enum MediaType {
+    MEDIA_TYPE_UNASSIGNED = 0;
+    MEDIA_TYPE_OVERLAY = 1;
+    MEDIA_TYPE_IMAGE = 2;
+    MEDIA_TYPE_VIDEO = 3;
+    MEDIA_TYPE_ASSETBUNDLE = 4;
+    MEDIA_TYPE_AUDIO = 5;
+    MEDIA_TYPE_ANIMATEDIMAGE = 6;
+    MEDIA_TYPE_FONT = 7;
+    MEDIA_TYPE_WEBVIEWCONTENT = 8;
+    MEDIA_TYPE_VIDEONOAUDIO = 9;
+    MEDIA_TYPE_SUBTITLES = 10;
+    MEDIA_TYPE_DATABLOB = 11;
+}
+
+enum MediaUrlType {
+    MEDIA_URL_TYPE_GCS = 0;
+    MEDIA_URL_TYPE_S3 = 1;
+    MEDIA_URL_TYPE_UNRECOGNIZED_VALUE = 2;
+}
+
+enum Metadata_MediaType {
+    META_DATA_MEDIA_TYPE_IMAGE = 0;
+    META_DATA_MEDIA_TYPE_VIDEO = 1;
+    META_DATA_MEDIA_TYPE_GIF = 2;
+    META_DATA_MEDIA_TYPE_AUDIO = 3;
+    /**
+     * UNKNOWN - Some legacy messages do not specify a media type - rather than make an assumption about what they are; we model them explicitly as UNKNOWN.
+     * New messages should absolutely not use this value.
+    */
+    META_DATA_MEDIA_TYPE_UNKNOWN = 4;
+}
+
+/**
+* DEPRECATED. Please use DisplayOrientation to specify the display orientation.
+* Orientation for display on the client. Defaults to VERTICAL.
+* Need to continue being populated for supporting backward compatibility.
+*/
+enum Orientation {
+    ORIENTATION_VERTICAL = 0;
+    ORIENTATION_HORIZONTAL = 1;
+}
+
+enum DisplayOrientation {
+    DISPLAY_ORIENTATION_UNSET = 0;
+    /** UP - The original pixel data matches the media's intended display orientation. */
+    DISPLAY_ORIENTATION_UP = 1;
+    /** DOWN - Rotate the original pixel data by 180 degree to match the media's intended display orientation. */
+    DISPLAY_ORIENTATION_DOWN = 2;
+    /** LEFT - Rotate the original pixel data by 90 degree counterclockwise to match the media's intended display orientation. */
+    DISPLAY_ORIENTATION_LEFT = 3;
+    /** RIGHT - Rotate the original pixel data by 90 degree clockwise to match the media's intended display orientation. */
+    DISPLAY_ORIENTATION_RIGHT = 4;
+    /** UP_MIRRORED - Horizontally flip the original pixel data to match the media's intended display orientation. */
+    DISPLAY_ORIENTATION_UP_MIRRORED = 5;
+    /** DOWN_MIRRORED - Vertically flip the original pixel data to match the media's intended display orientation. */
+    DISPLAY_ORIENTATION_DOWN_MIRRORED = 6;
+    /**
+     * LEFT_MIRRORED - Rotate the original pixel data by 90 degree clockwise and
+     * flip horizontally to match the media's intended display orientation.
+    */
+    DISPLAY_ORIENTATION_LEFT_MIRRORED = 7;
+    /**
+     * RIGHT_MIRRORED - Rotate the original pixel data by 90 degree counterclockwise and
+     * flip horizontally to match the media's intended display orientation.
+    */
+    DISPLAY_ORIENTATION_RIGHT_MIRRORED = 8;
+}

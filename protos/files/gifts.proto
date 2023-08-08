@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "uuid.proto";
+
+package gifts;
+
+option go_package = "../protos";
+
+message GiftInfo {
+    uuid.UUID orderReferenceId = 1;
+    uuid.UUID giftId = 2;
+}

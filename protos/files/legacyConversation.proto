@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package legacyConversation;
+
+option go_package = "../protos";
+
+message LegacyConversationInfo {
+    oneof legacyInfo {
+        LegacyOneOnOneConversationInfo legacyOneOnOneConversationInfo = 1;
+        LegacyGroupConversationInfo legacyGroupConversationInfo = 2;
+    }
+}
+
+message LegacyOneOnOneConversationInfo {
+    LegacyOneOnOneSequenceNumbers sequenceNumbers = 2;
+    repeated LegacyOneOnOneConversationInfo_UnviewedReceivedSnap unviewedReceivedSnaps = 3;
+    repeated LegacyOneOnOneConversationInfo_UnexpiredSentSnap unexpiredSentSnaps = 4;
+}
+
+message LegacyGroupConversationInfo {
+
+}
+
+message LegacyOneOnOneSequenceNumbers {
+    LegacyOneOnOneSequenceNumbers_SequenceNumber requesterSequenceNumber = 1;
+    LegacyOneOnOneSequenceNumbers_SequenceNumber otherParticipantSequenceNumber = 2;
+}
+
+message LegacyOneOnOneConversationInfo_UnviewedReceivedSnap {
+    int64 snapId = 1; // very confusing
+}
+
+message LegacyOneOnOneConversationInfo_UnexpiredSentSnap {
+    int64 snapId = 1;
+    bool hasBeenViewed = 2;
+    bool hasBeenReplayed = 3;
+    bool hasBeenScreenshotted = 4;
+    bool hasBeenRecorded = 5;
+}
+
+message LegacyOneOnOneSequenceNumbers_SequenceNumber {
+    int64 messageSequenceNumber = 1;
+    int64 updateSequenceNumber = 2;
+    int64 snapTimestamp = 3;
+}

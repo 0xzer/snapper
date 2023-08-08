@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package display;
+
+import "status.proto";
+
+option go_package = "../protos";
+
+message StatusMessageDisplayInfo {
+    oneof status {
+        status.StatusScreenCaptureDisplayInfo screenCapture = 1;
+        status.StatusCallingStatusDisplayInfo callingStatus = 2;
+        status.StatusParticipantAddDisplayInfo changeParticipant = 3;
+        status.StatusNameChangeDisplayInfo nameChange = 4;
+        status.StatusSaveToCameraRollDisplayInfo saveToCameraRoll = 5;
+        status.StatusInMyContactsDisplayInfo inMyContacts = 6;
+        status.StatusGenericChat genericChat = 7;
+        status.StatusParticipantKickDisplayInfo kickParticipant = 8;
+        status.StatusGroupChatCreatedDisplayInfo groupCreated = 9;
+    }
+}
+
+message ShareDisplayInfo {
+    oneof share {
+        ShareSavedStoryDisplayInfo savedStory = 1;
+    }
+}
+
+message ShareSavedStoryDisplayInfo {
+    bool hasAudio = 1;
+}
+
+message SnapDisplayInfo {
+    bool hasAudio = 1;
+    bool notViewable = 2;
+}
+
+message ExternalMediaDisplayInfo {
+    oneof media {
+        ExternalMediaDefaultDisplayInfo default = 1;
+        ExternalMediaGiftDisplayInfo gift = 2;
+    }
+}
+message ExternalMediaDefaultDisplayInfo {}
+message ExternalMediaGiftDisplayInfo {}

@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package device;
+
+option go_package = "../protos";
+
+message Device {
+  AppVersion appVersion = 1;
+  OSInfo osInfo = 2;
+  string bundleTag = 3;
+}
+
+message AppVersion {
+  VersionNumber versionNumber = 1;
+  Flavor flavor = 2;
+}
+
+message VersionNumber {
+  int32 major = 1;
+  int32 minor = 2;
+  int32 patch = 3;
+  int32 build = 4;
+}
+
+message OSInfo {
+  OsType osType = 1;
+  string osVersion = 2;
+}
+
+enum Flavor {
+    UNKNOWN = 0;
+    DEBUG = 1;
+    MASTER = 2;
+    ALPHA = 3;
+    PRODUCTION = 4;
+    BETA = 5;
+    GOLD = 6;
+}
+
+enum OsType {
+  UNSET = 0;
+  IOS = 1;
+  ANDROID = 2;
+  WINDOWS = 3;
+  MAC_OS_X = 4;
+  LINUX = 5;
+  CHROME_OS = 6;
+  OS_TYPE_OTHER = 7;
+}

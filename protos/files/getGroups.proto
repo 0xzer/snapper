@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "uuid.proto";
+import "conversation.proto";
+
+package getGroups;
+
+option go_package = "../protos";
+
+message GetGroupsRequest {
+    uuid.UUID selfUserId = 1;
+}
+
+message GetGroupsResponseWrapper {
+    repeated GetGroupsResponse response = 1;
+}
+
+message GetGroupsResponse {
+    conversation.Conversation group = 1;
+    int64 lastUpdateEventTime = 2;
+}
