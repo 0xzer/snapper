@@ -3,7 +3,7 @@ Snapper is a lightweight, easy-to-use Go library for interacting with Snapchat's
 
 ## Installation
 
-Use the [package manager](https://golang.org/dl/) to install matchmaker.
+Use the [package manager](https://golang.org/dl/) to install snapper.
 ```bash
 go get github.com/0xzer/snapper
 ```
